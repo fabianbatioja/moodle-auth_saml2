@@ -42,11 +42,12 @@ $path = $saml2auth->certcrt;
 $error = '';
 
 if ($fromform = $mform->get_data()) {
-    $error = auth_saml2_process_regenerate_form($fromform);
-    if ($error === '') {
-        redirect("$CFG->wwwroot/admin/settings.php?section=authsettingsaml2");
+    // Check if the certificates are locked, in that case don't regenerate.
+    if (get_config('auth_saml2', 'certs_locked') == false) {
+        $error = auth_saml2_process_regenerate_form($fromform);
+    } else {
+        $error = get_string('certificatelock_regenerate', 'auth_saml2');
     }
-
 } else {
 
     // Load data from the current certificate.
